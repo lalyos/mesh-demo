@@ -1,0 +1,16 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: test-auth
+  namespace: dev
+spec:
+  basicAuth:
+    secret: userssecret
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: userssecret
+  namespace: dev
+data:
+  users: YWRtaW46JGFwcjEkbjdDdTZnSGwkRTQ3b2dmN0NPOE5SWWpFakJPa1dNLg==

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - image: lalyos/allspark
+        name: frontend
+        volumeMounts:
+          - mountPath: /config
+            name: configvol
+        ports:
+        - containerPort: 8080
+        resources: {}
+      volumes:
+        - name: configvol
+          configMap:
+              name: front-config  
+status: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: front-config
+data:
+  config.toml: |
+    workload = "Echo"
+    echo_str = "FRONTEND config 1"
+    echo_delay = "1250ms"
+    requests = "http://notifications:8080/#1"
+    [log]
+    format = "logfmt"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: frontend
+  name: frontend
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: frontend
+status:
+  loadBalancer: {}
